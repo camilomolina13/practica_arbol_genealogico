@@ -13,6 +13,22 @@ public class ArbolN {
         return raiz == null;
     }
 
+    public boolean existeNodo(Nodo R, int cedulaBuscada) {
+        Nodo p = R;
+        while (p != null) {
+            if (p.getCedula() == cedulaBuscada) {
+                return true; // lo encontró
+            }
+            if (p.getSw() == 1) { // bajar al hijo
+                if (existeNodo(p.getLigaLista(), cedulaBuscada)) {
+                    return true; // lo encontró en la sublista
+                }
+            }
+            p = p.getLiga(); // siguiente hermano
+        }
+        return false; // no lo encontró en ninguna parte
+    }
+
     public void insertar(String nombre, int cedula, int edad){
         Nodo nuevoNodo = new Nodo(nombre, cedula, edad);
         if (estaVacio()) {
@@ -79,5 +95,58 @@ public class ArbolN {
             esPrimero = false;
         }
     }
+
+    public void mostrarHijos(Nodo R, int cedulaPadre) {
+        if (!existeNodo(R, cedulaPadre)) {
+            System.out.print("El nodo que busca no existe");
+        }else{
+            Nodo p = R;
+            while (p != null) {
+                if (p.getCedula() == cedulaPadre && p.getSw() == 1) {
+                    // este es el padre, entonces muestra sus hijos
+                    Nodo hijo = p.getLigaLista();
+                    while (hijo != null) {
+                        System.out.println(hijo.getCedula() + " " + hijo.getNombre() + " " + hijo.getEdad());
+                        hijo = hijo.getLiga();
+                    }
+                }
+                // si no es el padre, pero tiene sublista, buscar recursivamente
+                if (p.getSw() == 1) {
+                    mostrarHijos(p.getLigaLista(), cedulaPadre);
+                }
+                p = p.getLiga();
+            }
+        }
+    }
+
+    public void mostrarHermanos(Nodo R, int cedulaHermano) {
+        //valida que el nodo exista
+        if (!existeNodo(R, cedulaHermano)) {
+            System.out.print("El nodo que busca no existe");
+        }else{
+            Nodo p = R;
+            while (p != null) {
+                if (p.getCedula() == cedulaHermano) {
+                    // Recorro toda la lista de hermanos desde R
+                    Nodo hermano = R;
+                    while (hermano != null) {
+                        if (hermano.getCedula() != cedulaHermano) {
+                            System.out.println(hermano.getCedula() + " " +
+                                    hermano.getNombre() + " " +
+                                    hermano.getEdad());
+                        }
+                        hermano = hermano.getLiga();
+                    }
+                }
+                // Si no lo encuentro aquí, bajo a la sublista si existe
+                if (p.getSw() == 1) {
+                    mostrarHermanos(p.getLigaLista(), cedulaHermano);
+                }
+                p = p.getLiga();
+            }
+        }
+
+    }
+
 
 }

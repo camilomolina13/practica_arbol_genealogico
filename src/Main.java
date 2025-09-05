@@ -2,31 +2,36 @@ public class Main {
     public static void main(String[] args) {
 
         ArbolN arbol = new ArbolN();
-        boolean showMenu = true;
-        int opcionMenu = 0;
+//        boolean showMenu = true;
+//        int opcionMenu = 0;
+//
+//            while (showMenu!=true) {
+//
+//                lineaBonita();
+//                System.out.println("Seleccione lo que más le gusta ϖ");
+//                lineaBonita();
+//
+//                switch (opcionMenu) {
+//                    case 0:
+//                        datosDummies(arbol);
+//                    case 1:
+//                        arbol.mostrarArbol(arbol.getRaiz(),0);
+//
+//                    case 9:
+//                        System.out.println("Bye mor");
+//                        showMenu=false;
+//
+//
+//                }
+//            }
 
-            while (showMenu!=true) {
-
-                lineaBonita();
-                System.out.println("Seleccione lo que más le gusta ϖ");
-                lineaBonita();
-
-                switch (opcionMenu) {
-                    case 0:
-                        datosDummies(arbol);
-                    case 1:
-                        arbol.mostrarArbol(arbol.getRaiz(),0);
-
-                    case 9:
-                        System.out.println("Bye mor");
-                        showMenu=false;
-
-
-                }
-            }
-
-        // Insertar el primer nodo en la raíz
-        arbol.mostrarArbol(arbol.getRaiz(),0);
+        datosDummies(arbol);
+        //arbol.mostrarArbol(arbol.getRaiz(),0);
+        //arbol.mostrarHijos(arbol.getRaiz(),300);
+        //arbol.mostrarHijos(arbol.getRaiz(),100);
+        //arbol.mostrarHermanos(arbol.getRaiz(),400);
+        //arbol.mostrarHermanos(arbol.getRaiz(),600);
+        //arbol.mostrarHijos(arbol.getRaiz(),10000);
     }
 
     public static void lineaBonita() {
