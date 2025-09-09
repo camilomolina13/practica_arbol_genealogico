@@ -68,7 +68,6 @@ public class ArbolN {
     public void mostrarArbol(Nodo R,int nivel) {
         if (estaVacio()) {
             System.out.println("El árbol no tiene datos para mostrar");
-            return;
         }
         Nodo P = R;
         boolean esPrimero = true;
@@ -195,7 +194,6 @@ public class ArbolN {
             // Avanzamos al siguiente nodo hermano en el nivel actual
             p = p.getLiga();
         }
-
         // Si no encontramos nada, retornamos null
         return null;
     }
@@ -220,4 +218,45 @@ public class ArbolN {
                     padre.getNombre());
         }
     }
+
+    public void mostrarAltura(Nodo R) {
+        int altura = calcularAltura(R);
+        System.out.println("La altura del árbol es: " + altura);
+    }
+
+    private int calcularAltura(Nodo R) {
+        if (R == null) {
+            return 0; // Altura de un árbol vacío es 0 porque no tiene raíz
+        }
+
+        if (R.getSw() == 0) {
+            return 1; // Altura de una hoja es 1
+        }
+
+        int maxAltura = 1;
+        Nodo hijo = R.getLigaLista();
+        while (hijo != null) {
+            int alturaHijo = calcularAltura(hijo);
+            if (alturaHijo > maxAltura) {
+                maxAltura = alturaHijo;
+            }
+            hijo = hijo.getLiga();
+        }
+
+        return maxAltura + 1; // Altura del nodo actual es 1 más la altura máxima de sus hijos
+    }
+
+    public void actualizarNodo(Nodo R, int cedulaBuscada, int cedula, String nombre, int edad) {
+        Nodo nodo = buscarNodo(R, cedulaBuscada);
+        if (nodo == null) {
+            System.out.println("El nodo no existe");
+        }else{
+            System.out.println("Nodo: "+ nodo.getNombre() + " actualizado correctamente");
+            nodo.setNombre(nombre);
+            nodo.setCedula(cedula);
+            nodo.setEdad(edad);
+            System.out.println("Nodo actualizado "+ "Nombre: "+nodo.getNombre()+ " Cédula: " + nodo.getCedula() +" Edad: "+nodo.getEdad());
+        }
+    }
+
 }

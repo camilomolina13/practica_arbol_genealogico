@@ -33,7 +33,11 @@ public class Main {
         //arbol.mostrarHermanos(arbol.getRaiz(),400);
         //arbol.mostrarHermanos(arbol.getRaiz(),600);
         //arbol.mostrarHijos(arbol.getRaiz(),10000);
-        arbol.mostrarPadre(arbol.getRaiz(),100);
+        //arbol.mostrarPadre(arbol.getRaiz(),100);
+        //arbol.mostrarAltura(arbol.getRaiz());
+        //arbol.mostrarArbol(arbol.getRaiz(),0);
+        arbol.actualizarNodo(arbol.getRaiz(), 300, 300, "Camilo", 99);
+        arbol.mostrarArbol(arbol.getRaiz(),0);
     }
 
     public static void lineaBonita() {
