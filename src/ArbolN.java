@@ -259,4 +259,329 @@ public class ArbolN {
         }
     }
 
+    public Nodo obtenerNodoConMayorGrado(Nodo R) {
+        if (R == null) {
+            return null; // Caso base: árbol vacío
+        } else {
+            // Inicialmente el mejor nodo es el actual
+            Nodo mejor = R;
+            int gradoMejor = 0;
+
+            // Contar los hijos directos del nodo actual
+            Nodo hijoTemp = R.getLigaLista();
+
+            while (hijoTemp != null) {
+                gradoMejor++;
+                hijoTemp = hijoTemp.getLiga();
+            }
+
+            // Revisar en cada hijo si hay un mejor candidato
+            Nodo hijo = R.getLigaLista();
+            while (hijo != null) {
+                Nodo candidato = obtenerNodoConMayorGrado(hijo);
+
+                if (candidato != null) {
+                    // Contar hijos del candidato
+                    int gradoCandidato = 0;
+                    Nodo aux = candidato.getLigaLista();
+                    while (aux != null) {
+                        gradoCandidato++;
+                        aux = aux.getLiga();
+                    }
+
+                    if (gradoCandidato > gradoMejor) {
+                        mejor = candidato;
+                        gradoMejor = gradoCandidato;
+                    } else {
+                        // Si el grado del candidato no es mayor, se conserva el R
+                        mejor = mejor;
+                    }
+                } else {
+                    // Si el candidato es nulo, no hacemos nada
+                    mejor = mejor;
+                }
+
+                hijo = hijo.getLiga();
+            }
+
+            return mejor;
+        }
+    }
+
+    public void mostrarAncestros(int cedulaBuscada) {
+        if (raiz == null) {
+            System.out.println("El árbol está vacío.");
+            return;
+        }
+
+        System.out.println("Ancestros de " + cedulaBuscada + ":");
+        if (!mostrarAncestrosRecursivo(raiz, cedulaBuscada)) {
+            System.out.println("No se encontró el nodo con cédula " + cedulaBuscada);
+        }
+    }
+
+    private boolean mostrarAncestrosRecursivo(Nodo actual, int cedulaBuscada) {
+        if (actual == null) return false;
+
+        // Caso base: encontramos el nodo
+        if (actual.getCedula() == cedulaBuscada) {
+            return true;
+        }
+
+        // Buscar en sus hijos
+        Nodo hijo = actual.getLigaLista();
+        while (hijo != null) {
+            if (mostrarAncestrosRecursivo(hijo, cedulaBuscada)) {
+                // Si el hijo contiene el nodo buscado, este "actual" es un ancestro
+                System.out.println(" → " + actual.getNombre() + " (Cédula: " + actual.getCedula() + ")");
+                return true;
+            }
+            hijo = hijo.getLiga();
+        }
+
+        return false;
+    }
+
+    public void mostrarNodoConMayorGrado(Nodo R) {
+        if (R == null) {
+            System.out.println("El árbol está vacío");
+        } else {
+            Nodo nodoMayor = obtenerNodoConMayorGrado(R);
+
+            if (nodoMayor != null) {
+                // Contar hijos para mostrar el grado
+                int grado = 0;
+                Nodo hijo = nodoMayor.getLigaLista();
+                while (hijo != null) {
+                    grado++;
+                    hijo = hijo.getLiga();
+                }
+
+                System.out.println("El nodo con mayor grado es: "
+                        + nodoMayor.getNombre()
+                        + " con grado: " + grado);
+            } else {
+                System.out.println("No se encontró ningún nodo en el árbol");
+            }
+        }
+    }
+
+    public void mostrarNodoConMayorNivel(Nodo R) {
+        if (R == null) {
+            System.out.println("El árbol está vacío");
+            return;
+        }
+
+        int altura = calcularAltura(R); // Ya lo tienes implementado
+        int nivelObjetivo = altura - 1; // El nivel más profundo
+
+        Nodo nodoMayorNivel = obtenerNodoEnNivel(R, 0, nivelObjetivo);
+
+        if (nodoMayorNivel != null) {
+            System.out.println("El nodo con mayor nivel es: "
+                    + nodoMayorNivel.getNombre()
+                    + " en el nivel: " + (nivelObjetivo +1));
+        } else {
+            System.out.println("No se encontró ningún nodo en el árbol");
+        }
+    }
+
+    private Nodo obtenerNodoEnNivel(Nodo actual, int nivelActual, int nivelObjetivo) {
+        if (actual == null) {
+            return null;
+        }
+
+        Nodo resultado = null;
+
+        if (nivelActual == nivelObjetivo) {
+            resultado = actual; // Guarda este nodo, pero no retorna inmediatamente
+        }
+
+        Nodo hijo = actual.getLigaLista();
+        while (hijo != null) {
+            Nodo candidato = obtenerNodoEnNivel(hijo, nivelActual + 1, nivelObjetivo);
+            if (candidato != null) {
+                resultado = candidato; // Sobrescribe con el último encontrado
+            }
+            hijo = hijo.getLiga();
+        }
+
+        return resultado;
+    }
+
+    public void mostrarDescendientes(Nodo raiz, int cedulaBuscada) {
+        Nodo nodo = buscarNodo(raiz, cedulaBuscada);
+        if (nodo == null) {
+            System.out.println("No se encontró el nodo con cédula " + cedulaBuscada);
+            return;
+        }
+
+        System.out.println("Descendientes de " + nodo.getNombre() + " (Cédula: " + nodo.getCedula() + "):");
+        mostrarDescendientesRecursivo(nodo.getLigaLista());
+    }
+
+    private void mostrarDescendientesRecursivo(Nodo hijo) {
+        while (hijo != null) {
+            System.out.println(" → " + hijo.getNombre() + " (Cédula: " + hijo.getCedula() + ")");
+            // Recursión con los hijos de este nodo
+            if (hijo.getLigaLista() != null) {
+                mostrarDescendientesRecursivo(hijo.getLigaLista());
+            }
+            hijo = hijo.getLiga(); // pasar al siguiente hermano
+        }
+    }
+
+    public int mostrarNivelDeRegistro(Nodo raiz, int cedulaBuscada) {
+        int nivel = buscarNivel(raiz, cedulaBuscada, 0);
+        if (nivel == -1) {
+            System.out.println("No se encontró el nodo con cédula " + cedulaBuscada);
+        } else {
+            System.out.println("El nodo con cédula " + cedulaBuscada + " está en el nivel " + nivel);
+        }
+        return nivel;
+    }
+
+    private int buscarNivel(Nodo actual, int cedula, int nivel) {
+        if (actual == null) return -1;
+
+        if (actual.getCedula() == cedula) return nivel;
+
+        Nodo hijo = actual.getLigaLista();
+        while (hijo != null) {
+            int nivelEncontrado = buscarNivel(hijo, cedula, nivel + 1);
+            if (nivelEncontrado != -1) return nivelEncontrado;
+            hijo = hijo.getLiga();
+        }
+        return -1;
+    }
+
+    public void mostrarRegistrosDeNivel(Nodo raiz, int nivelBuscado) {
+        System.out.println("Registros en el nivel " + nivelBuscado + ":");
+        mostrarEnNivel(raiz, 0, nivelBuscado);
+    }
+
+    private void mostrarEnNivel(Nodo actual, int nivelActual, int nivelBuscado) {
+        if (actual == null) return;
+
+        if (nivelActual == nivelBuscado) {
+            System.out.println(" → " + actual.getNombre() + " (Cédula: " + actual.getCedula() + ")");
+        }
+
+        Nodo hijo = actual.getLigaLista();
+        while (hijo != null) {
+            mostrarEnNivel(hijo, nivelActual + 1, nivelBuscado);
+            hijo = hijo.getLiga();
+        }
+    }
+
+    public void eliminarNivel(Nodo R, int nivel) {
+        if (R == null) return;
+
+        if (nivel == 1) {
+            // Caso especial: eliminar el nivel raíz → se pierde todo
+            R = null;
+            return;
+        }
+
+        eliminarNivelRecursivo(R, 1, nivel);
+    }
+
+    private void eliminarNivelRecursivo(Nodo actual, int nivelActual, int nivelBuscado) {
+        if (actual == null) return;
+
+        if (nivelActual + 1 == nivelBuscado && actual.getSw() == 1) {
+            Nodo primerNodoNivel = actual.getLigaLista();
+
+            if (primerNodoNivel == null) return;
+
+            Nodo nuevoInicio = null;
+            Nodo fin = null;
+
+            // Recorremos los nodos del nivel que se va a eliminar
+            Nodo cursor = primerNodoNivel;
+            while (cursor != null) {
+                if (cursor.getSw() == 1) {
+                    // hijos de este nodo
+                    Nodo hijos = cursor.getLigaLista();
+
+                    if (hijos != null) {
+                        if (nuevoInicio == null) {
+                            nuevoInicio = hijos;  // Primer hijo
+                            fin = hijos;
+                            while (fin.getLiga() != null) {
+                                fin = fin.getLiga();
+                            }
+                        } else {
+                            // Conectar los hijos al final
+                            fin.setLiga(hijos);
+                            while (fin.getLiga() != null) {
+                                fin = fin.getLiga();
+                            }
+                        }
+                    }
+                }
+                cursor = cursor.getLiga();
+            }
+
+            // Reemplazar el nivel eliminado con los hijos encontrados
+            actual.setLigaLista(nuevoInicio);
+            if (nuevoInicio != null) {
+                actual.setSw(1);
+            } else {
+                actual.setSw(0);
+            }
+
+            return;
+        }
+
+        // Seguir recorriendo normalmente
+        Nodo hijo = actual.getLigaLista();
+        while (hijo != null) {
+            eliminarNivelRecursivo(hijo, nivelActual + 1, nivelBuscado);
+            hijo = hijo.getLiga();
+        }
+    }
+
+    public Nodo eliminarNodo(Nodo raiz, int cedulaBuscada) {
+        if (raiz == null) return null;
+
+        Nodo hijo = raiz.getLigaLista();
+        Nodo anterior = null;
+
+        while (hijo != null) {
+            if (hijo.getCedula() == cedulaBuscada) {
+                // caso: eliminar hijo actual
+                if (anterior == null) {
+                    // el nodo eliminado es el primer hijo
+                    raiz.setLigaLista(hijo.getLiga());
+                } else {
+                    anterior.setLiga(hijo.getLiga());
+                }
+
+                // Reubicar hijos del nodo eliminado
+                if (hijo.getLigaLista() != null) {
+                    Nodo primerHijo = hijo.getLigaLista();
+                    Nodo ultimoHijo = primerHijo;
+                    while (ultimoHijo.getLiga() != null) {
+                        ultimoHijo = ultimoHijo.getLiga();
+                    }
+                    // enlazar los hijos al hermano mayor
+                    ultimoHijo.setLiga(hijo.getLiga());
+                    if (anterior == null) {
+                        raiz.setLigaLista(primerHijo);
+                    } else {
+                        anterior.setLiga(primerHijo);
+                    }
+                }
+
+                return raiz;
+            }
+
+            eliminarNodo(hijo, cedulaBuscada);
+            anterior = hijo;
+            hijo = hijo.getLiga();
+        }
+        return raiz;
+    }
+
 }

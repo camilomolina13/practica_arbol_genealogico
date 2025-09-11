@@ -36,8 +36,16 @@ public class Main {
         //arbol.mostrarPadre(arbol.getRaiz(),100);
         //arbol.mostrarAltura(arbol.getRaiz());
         //arbol.mostrarArbol(arbol.getRaiz(),0);
-        arbol.actualizarNodo(arbol.getRaiz(), 300, 300, "Camilo", 99);
-        arbol.mostrarArbol(arbol.getRaiz(),0);
+        //arbol.actualizarNodo(arbol.getRaiz(), 300, 300, "Camilo", 99);
+        //arbol.mostrarArbol(arbol.getRaiz(),0);
+        //arbol.mostrarNodoConMayorNivel(arbol.getRaiz());
+        //arbol.mostrarDescendientes(arbol.getRaiz(), 200);
+        arbol.mostrarAncestros(500);
+        //arbol.mostrarNivelDeRegistro(arbol.getRaiz(), 600);
+        //arbol.mostrarRegistrosDeNivel(arbol.getRaiz(), 700);
+        //arbol.eliminarNodo(arbol.getRaiz(), 350);
+        //arbol.eliminarNivel(arbol.getRaiz(),3);
+        //arbol.mostrarArbol(arbol.getRaiz(), 0);
     }
 
     public static void lineaBonita() {
