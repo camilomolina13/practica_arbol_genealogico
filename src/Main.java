@@ -134,11 +134,26 @@ public class Main {
                         if (cedulaStr != null) {
                             try {
                                 int cedulaBuscada = Integer.parseInt(cedulaStr);
-                                arbol.actualizarNodo(arbol.getRaiz(), 0, 0, "Nos", 0);
+
+                                // Pedir los nuevos datos
+                                String nuevaCedulaStr = JOptionPane.showInputDialog(null, "Ingrese la nueva cédula:");
+                                String nuevoNombre = JOptionPane.showInputDialog(null, "Ingrese el nuevo nombre:");
+                                String nuevaEdadStr = JOptionPane.showInputDialog(null, "Ingrese la nueva edad:");
+
+                                // Convertir a números
+                                int nuevaCedula = Integer.parseInt(nuevaCedulaStr);
+                                int nuevaEdad = Integer.parseInt(nuevaEdadStr);
+
+                                // Llamada al método del árbol
+                                arbol.actualizarNodo(arbol.getRaiz(), cedulaBuscada, nuevaCedula, nuevoNombre, nuevaEdad);
+
+                                JOptionPane.showMessageDialog(null, "✅ Datos actualizados correctamente.");
+
                             } catch (NumberFormatException e) {
-                                JOptionPane.showMessageDialog(null, "⚠ La cédula debe ser un número válido.");
+                                JOptionPane.showMessageDialog(null, "⚠ Error: debe ingresar valores numéricos válidos para cédula y edad.");
                             }
                         }
+
                     }
                     default ->
                         JOptionPane.showMessageDialog(null, "⚠ Opción no válida.");
@@ -313,8 +328,17 @@ public class Main {
                 back = true;
             } else {
                 switch (opcion) {
-                    case "1" ->
-                        JOptionPane.showMessageDialog(null, "📌 Llamar método: eliminarNivel()");
+                    case "1" -> {
+                        String nivelEliminar = JOptionPane.showInputDialog(null, "Ingrese el nivel a eliminar:");
+                        if (nivelEliminar != null) {
+                            try {
+                                int nivel = Integer.parseInt(nivelEliminar);
+                                arbol.eliminarNivel(arbol.getRaiz(), nivel);
+                            } catch (NumberFormatException e) {
+                                JOptionPane.showMessageDialog(null, "⚠ La cédula debe ser un número válido.");
+                            }
+                        }
+                    }
                     default ->
                         JOptionPane.showMessageDialog(null, "⚠ Opción no válida.");
                 }
@@ -362,4 +386,4 @@ public class Main {
 //arbol.mostrarRegistrosDeNivel(arbol.getRaiz(), 700);
 //arbol.eliminarNodo(arbol.getRaiz(), 350);
 //arbol.eliminarNivel(arbol.getRaiz(),3);
-        //arbol.mostrarArbol(arbol.getRaiz(), 0);
+//arbol.mostrarArbol(arbol.getRaiz(), 0);
