@@ -285,15 +285,33 @@ public class Main {
             } else {
                 switch (opcion) {
                     case "1" ->
-                        JOptionPane.showMessageDialog(null, "📌 Llamar método: nodoMayorGrado()");
+                        arbol.mostrarNodoConMayorGrado(arbol.getRaiz());
                     case "2" ->
-                        JOptionPane.showMessageDialog(null, "📌 Llamar método: nodoMayorNivel()");
+                        arbol.mostrarNodoConMayorNivel(arbol.getRaiz());
                     case "3" ->
-                        JOptionPane.showMessageDialog(null, "📌 Llamar método: alturaArbol()");
-                    case "4" ->
-                        JOptionPane.showMessageDialog(null, "📌 Llamar método: nivelRegistro()");
-                    case "5" ->
-                        JOptionPane.showMessageDialog(null, "📌 Llamar método: registrosPorNivel()");
+                        arbol.mostrarAltura(arbol.getRaiz());
+                    case "4" -> {
+                        String cedulaStr = JOptionPane.showInputDialog(null, "Ingrese la cedula de la persona a consultar:");
+                        if (cedulaStr != null) {
+                            try {
+                                int cedula = Integer.parseInt(cedulaStr);
+                                arbol.mostrarNivelDeRegistro(arbol.getRaiz(), cedula);
+                            } catch (NumberFormatException e) {
+                                JOptionPane.showMessageDialog(null, "⚠ La cédula debe ser un número válido.");
+                            }
+                        }
+                    }
+                    case "5" -> {
+                        String nivel = JOptionPane.showInputDialog(null, "Ingrese el nivel a consultar:");
+                        if (nivel != null) {
+                            try {
+                                int nivelaMostrar = Integer.parseInt(nivel);
+                                arbol.mostrarRegistrosDeNivel(arbol.getRaiz(), nivelaMostrar);
+                            } catch (NumberFormatException e) {
+                                JOptionPane.showMessageDialog(null, "⚠ La cédula debe ser un número válido.");
+                            }
+                        }
+                    }
                     default ->
                         JOptionPane.showMessageDialog(null, "⚠ Opción no válida.");
                 }
