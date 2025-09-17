@@ -21,13 +21,13 @@ public class Main {
                     null,
                     """
                                     ╔════════════════════════════════════╗
-                                    ║         🌳 MENÚ PRINCIPAL 🌳         ║
+                                             🌳 MENÚ PRINCIPAL 🌳         
                                     ╠════════════════════════════════════╣
-                                    ║ 1. 👥 Gestión de Personas            ║
-                                    ║ 2. 👨‍ Consultar Relaciones         ║
-                                    ║ 3. 🏗 Consultar Estructura           ║
-                                    ║ 4. 🗑Eliminación de Niveles         ║
-                                    ║ 5. 🚪 Salir                          ║
+                                    ║ 1. 👥 Gestión de Personas            
+                                    ║ 2. 👨‍ Consultar Relaciones         
+                                    ║ 3. 🏗 Consultar Estructura           
+                                    ║ 4. 🗑Eliminación de Niveles         
+                                    ║ 5. 🚪 Salir                          
                                     ╚════════════════════════════════════╝
                                                          👉 Selecciona una opción:
                                     """,
@@ -67,14 +67,14 @@ public class Main {
             var opcion = JOptionPane.showInputDialog(
                     null,
                     """
-                ╔════════════════════════════════════╗
-                ║       👥 Gestión de Personas        ║
-                ╠════════════════════════════════════╣
-                ║ 1. ➕ Registrar Persona              ║
-                ║ 2. ❌ Eliminar Persona               ║
-                ║ 3. ♻  Actualizar Persona             ║
-                ║ 4. 🔙 Volver al Menú Principal       ║
-                ╚════════════════════════════════════╝
+                ╔════════════════════════════════════
+                ║       👥 Gestión de Personas        
+                ╠════════════════════════════════════
+                ║ 1. ➕ Registrar Persona              
+                ║ 2. ❌ Eliminar Persona               
+                ║ 3. ♻  Actualizar Persona             
+                ║ 4. 🔙 Volver al Menú Principal       
+                ╚════════════════════════════════════
                 
                 👉 Selecciona una opción:
                 """,
@@ -86,12 +86,60 @@ public class Main {
                 back = true;
             } else {
                 switch (opcion) {
-                    case "1" ->
-                        JOptionPane.showMessageDialog(null, "📌 Llamar método: registrarPersona(Pendiente)");
-                    case "2" ->
-                        JOptionPane.showMessageDialog(null, "📌 Llamar método: eliminarPersona(Pendiente)");
-                    case "3" ->
-                        JOptionPane.showMessageDialog(null, "📌 Llamar método: actualizarPersona(Pendiente)");
+                    case "1" -> {
+                        // Pedimos los datos
+                        String cedulaStr = JOptionPane.showInputDialog("Ingrese la cédula:");
+                        String nombre = JOptionPane.showInputDialog("Ingrese el nombre:");
+                        String cedulaPadreStr = JOptionPane.showInputDialog("Ingrese la cédula del padre:");
+                        String edadStr = JOptionPane.showInputDialog("Ingrese la edad:");
+
+                        // Validamos y convertimos a números donde corresponda
+                        try {
+                            int cedula = Integer.parseInt(cedulaStr);
+                            int cedulaPadre = Integer.parseInt(cedulaPadreStr);
+                            int edad = Integer.parseInt(edadStr);
+
+                            if (arbol.estaVacio()) {
+                                arbol.insertar(nombre, cedula, edad);
+                            } else {
+                                arbol.insertar(arbol.getRaiz(), nombre, cedula, edad, cedulaPadre);
+                            }
+
+                            // Mostramos un resumen de lo ingresado
+                            JOptionPane.showMessageDialog(null,
+                                    "✅ Datos registrados:\n"
+                                    + "Cédula: " + cedula + "\n"
+                                    + "Nombre: " + nombre + "\n"
+                                    + "Cédula del padre: " + cedulaPadre + "\n"
+                                    + "Edad: " + edad
+                            );
+
+                        } catch (NumberFormatException e) {
+                            JOptionPane.showMessageDialog(null, "⚠️ Error: Debe ingresar valores numéricos válidos para cédula y edad.");
+                        }
+                    }
+                    case "2" -> {
+                        String cedulaStr = JOptionPane.showInputDialog(null, "Ingrese la cédula de la persona a eliminar");
+                        if (cedulaStr != null) {
+                            try {
+                                int cedulaBuscada = Integer.parseInt(cedulaStr);
+                                arbol.eliminarNodo(arbol.getRaiz(), cedulaBuscada);
+                            } catch (NumberFormatException e) {
+                                JOptionPane.showMessageDialog(null, "⚠ La cédula debe ser un número válido.");
+                            }
+                        }
+                    }
+                    case "3" -> {
+                        String cedulaStr = JOptionPane.showInputDialog(null, "Ingrese la cédula de la persona a actualizar");
+                        if (cedulaStr != null) {
+                            try {
+                                int cedulaBuscada = Integer.parseInt(cedulaStr);
+                                arbol.actualizarNodo(arbol.getRaiz(), 0, 0, "Nos", 0);
+                            } catch (NumberFormatException e) {
+                                JOptionPane.showMessageDialog(null, "⚠ La cédula debe ser un número válido.");
+                            }
+                        }
+                    }
                     default ->
                         JOptionPane.showMessageDialog(null, "⚠ Opción no válida.");
                 }
@@ -108,16 +156,16 @@ public class Main {
             String opcion = JOptionPane.showInputDialog(
                     null,
                     """
-                ╔════════════════════════════════════╗
-                ║   👨‍👩‍👧 Consultar Relaciones Familiares  ║
-                ╠════════════════════════════════════╣
-                ║ 1. 👨‍👩 Padres                       ║
-                ║ 2. 👶 Hijos                         ║
-                ║ 3. 🤝 Hermanos                      ║
-                ║ 4. 🧓 Ancestros                     ║
-                ║ 5. 🌱 Descendientes                 ║
-                ║ 6. 🔙 Volver al Menú Principal       ║
-                ╚════════════════════════════════════╝
+                ╔════════════════════════════════════
+                ║   👨‍👩‍👧 Consultar Relaciones Familiares  
+                ╠════════════════════════════════════
+                ║ 1. 👨‍👩 Padres                       
+                ║ 2. 👶 Hijos                        
+                ║ 3. 🤝 Hermanos                      
+                ║ 4. 🧓 Ancestros                     
+                ║ 5. 🌱 Descendientes                 
+                ║ 6. 🔙 Volver al Menú Principal       
+                ╚════════════════════════════════════
                 
                 👉 Selecciona una opción:
                 """,
@@ -200,16 +248,16 @@ public class Main {
             String opcion = JOptionPane.showInputDialog(
                     null,
                     """
-                ╔════════════════════════════════════╗
-                ║       🏗  Estructura del Árbol       ║
-                ╠════════════════════════════════════╣
-                ║ 1. 🔝 Nodo con mayor grado           ║
-                ║ 2. 📏 Nodo con mayor nivel           ║
-                ║ 3. 🌳 Altura del árbol               ║
-                ║ 4. 🎯 Nivel de un registro           ║
-                ║ 5. 📂 Registros por nivel            ║
-                ║ 6. 🔙 Volver al Menú Principal       ║
-                ╚════════════════════════════════════╝
+                ╔════════════════════════════════════
+                ║       🏗  Estructura del Árbol       
+                ╠════════════════════════════════════
+                ║ 1. 🔝 Nodo con mayor grado           
+                ║ 2. 📏 Nodo con mayor nivel           
+                ║ 3. 🌳 Altura del árbol               
+                ║ 4. 🎯 Nivel de un registro           
+                ║ 5. 📂 Registros por nivel            
+                ║ 6. 🔙 Volver al Menú Principal       
+                ╚════════════════════════════════════
                 
                 👉 Selecciona una opción:
                 """,
@@ -247,13 +295,13 @@ public class Main {
             String opcion = JOptionPane.showInputDialog(
                     null,
                     """
-                ╔════════════════════════════════════╗
-                ║       🗑  Eliminación de Niveles      ║
-                ╠════════════════════════════════════╣
-                ║ 1. ❌ Eliminar todos los nodos       ║
-                ║    de un nivel específico            ║
-                ║ 2. 🔙 Volver al Menú Principal       ║
-                ╚════════════════════════════════════╝
+                ╔════════════════════════════════════
+                ║       🗑  Eliminación de Niveles      
+                ╠════════════════════════════════════
+                ║ 1. ❌ Eliminar todos los nodos       
+                ║    de un nivel específico            
+                ║ 2. 🔙 Volver al Menú Principal       
+                ╚════════════════════════════════════
                 
                 👉 Selecciona una opción:
                 """,
