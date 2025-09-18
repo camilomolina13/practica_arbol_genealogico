@@ -14,7 +14,7 @@ public class Main {
         while (ejecutarMenu) {
 
             //Mostrar arbol (temporal)///////////////////////////////
-            arbol.mostrarArbol(arbol.getRaiz(), 0);
+            //arbol.mostrarArbol(arbol.getRaiz(), 0);
 
             String opcion;
             opcion = JOptionPane.showInputDialog(
@@ -90,30 +90,34 @@ public class Main {
                         // Pedimos los datos
                         String cedulaStr = JOptionPane.showInputDialog("Ingrese la cédula:");
                         String nombre = JOptionPane.showInputDialog("Ingrese el nombre:");
-                        String cedulaPadreStr = JOptionPane.showInputDialog("Ingrese la cédula del padre:");
                         String edadStr = JOptionPane.showInputDialog("Ingrese la edad:");
-
+                        int cedula = Integer.parseInt(cedulaStr);
+                        int edad = Integer.parseInt(edadStr);
                         // Validamos y convertimos a números donde corresponda
                         try {
-                            int cedula = Integer.parseInt(cedulaStr);
-                            int cedulaPadre = Integer.parseInt(cedulaPadreStr);
-                            int edad = Integer.parseInt(edadStr);
-
                             if (arbol.estaVacio()) {
                                 arbol.insertar(nombre, cedula, edad);
+                                // Mostramos un resumen de lo ingresado
+                                JOptionPane.showMessageDialog(null,
+                                        "✅ Datos registrados:\n"
+                                                + "Cédula: " + cedula + "\n"
+                                                + "Nombre: " + nombre + "\n"
+                                                + "Edad: " + edad
+                                );
                             } else {
+                                String cedulaPadreStr = JOptionPane.showInputDialog("Ingrese la cédula del padre:");
+                                int cedulaPadre = Integer.parseInt(cedulaPadreStr);
                                 arbol.insertar(arbol.getRaiz(), nombre, cedula, edad, cedulaPadre);
+                                // Mostramos un resumen de lo ingresado
+                                JOptionPane.showMessageDialog(null,
+                                        "✅ Datos registrados:\n"
+                                                + "Cédula: " + cedula + "\n"
+                                                + "Nombre: " + nombre + "\n"
+                                                + "Cédula del padre: " + cedulaPadre + "\n"
+                                                + "Edad: " + edad
+                                );
                             }
-
-                            // Mostramos un resumen de lo ingresado
-                            JOptionPane.showMessageDialog(null,
-                                    "✅ Datos registrados:\n"
-                                    + "Cédula: " + cedula + "\n"
-                                    + "Nombre: " + nombre + "\n"
-                                    + "Cédula del padre: " + cedulaPadre + "\n"
-                                    + "Edad: " + edad
-                            );
-
+                            arbol.mostrarArbol(arbol.getRaiz(), 0);
                         } catch (NumberFormatException e) {
                             JOptionPane.showMessageDialog(null, "⚠️ Error: Debe ingresar valores numéricos válidos para cédula y edad.");
                         }
