@@ -37,30 +37,43 @@ public class ArbolN {
         }
     }
 
-    public void insertar(Nodo R, String nombre, int cedula, int edad, int cedulaPadre){
+    public void insertar(Nodo R, String nombre, int cedula, int edad, int cedulaPadre) {
         Nodo P = R;
         Nodo nuevo = new Nodo(nombre, cedula, edad);
 
         while (P != null) {
             if (P.getCedula() == cedulaPadre) {
-                // Si el nodo padre tiene una sublista
+                // Si el nodo padre ya tiene sublista de hijos
                 if (P.getSw() == 1) {
                     Nodo temp = P.getLigaLista();
-                    // Añadir el nuevo nodo al final de la sublista
-                    while (temp.getLiga() != null) {
+                    Nodo anterior = null;
+
+                    // Buscar posición donde insertar ordenado por cédula
+                    while (temp != null && temp.getCedula() < cedula) {
+                        anterior = temp;
                         temp = temp.getLiga();
                     }
-                    temp.setLiga(nuevo);
+
+                    if (anterior == null) {
+                        // Insertar al inicio de la sublista
+                        nuevo.setLiga(P.getLigaLista());
+                        P.setLigaLista(nuevo);
+                    } else {
+                        // Insertar en medio o al final
+                        nuevo.setLiga(temp);
+                        anterior.setLiga(nuevo);
+                    }
                 } else {
-                    // Si el nodo padre no tiene una sublista
-                    P.setSw(1); // Indica que tiene una sublista
-                    P.setLigaLista(nuevo); // Inicializa la sublista con el nuevo nodo
-                }
+                    // Si el nodo padre no tiene hijos aún
+                    P.setSw(1);
+                    P.setLigaLista(nuevo);
+                } // Importante: salir después de insertar
             } else if (P.getSw() == 1) {
-                // Si el nodo tiene sublista, buscar en la sublista
+                // Buscar recursivamente en la sublista
                 insertar(P.getLigaLista(), nombre, cedula, edad, cedulaPadre);
             }
-            // Avanzar al siguiente hermano
+
+            // Pasar al siguiente hermano
             P = P.getLiga();
         }
     }
@@ -95,30 +108,29 @@ public class ArbolN {
         }
     }
 
-    public void mostrarHijos(Nodo R, int cedulaPadre) {
+    public String mostrarHijos(Nodo R, int cedulaPadre) {
         // Buscar el nodo padre en el árbol usando su cédula
         Nodo nodo = buscarNodo(R, cedulaPadre);
 
-        // Si el nodo no existe en el árbol
         if (nodo == null) {
-            System.out.println("Nodo no encontrado");
-        } else {
-            // Si el nodo tiene hijos (sw == 1 indica que hay sublista)
-            if (nodo.getSw() == 1 && nodo.getLigaLista() != null) {
-                Nodo hijo = nodo.getLigaLista(); // Primer hijo del nodo padre
-                System.out.print("Hijos de " + nodo.getNombre() + ": ");
-
-                // Recorrer todos los hijos enlazados y mostrarlos
-                while (hijo != null) {
-                    System.out.print(hijo.getNombre() + ", ");
-                    hijo = hijo.getLiga(); // pasar al siguiente hermano
-                }
-                System.out.println(); // salto de línea al final
-            } else {
-                // El nodo existe pero no tiene hijos
-                System.out.println("El nodo no tiene hijos");
-            }
+            return "Nodo no encontrado";
         }
+
+        // Si no tiene hijos
+        if (nodo.getSw() != 1 || nodo.getLigaLista() == null) {
+            return "El nodo no tiene hijos";
+        }
+
+        // Si tiene hijos
+        String mensaje = "Hijos de " + nodo.getNombre() + ":\n";
+        Nodo hijo = nodo.getLigaLista();
+
+        while (hijo != null) {
+            mensaje += "- Nombre: " + hijo.getNombre() +", cédula: "+ hijo.getCedula() + ", edad: " + hijo.getEdad() + "\n";
+            hijo = hijo.getLiga();
+        }
+
+        return mensaje;
     }
 
     public void mostrarHermanos(Nodo R, int cedulaHermano) {

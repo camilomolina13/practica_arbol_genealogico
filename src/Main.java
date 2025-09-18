@@ -8,6 +8,7 @@ public class Main {
         // ===== Crear árbol e insertar datos de prueba =====
         ArbolN arbol = new ArbolN();
         datosDummies(arbol);
+        //arbol.mostrarArbol(arbol.getRaiz(), 0);
 
         // ===== Menú principal =====
         boolean ejecutarMenu = true;
@@ -212,7 +213,8 @@ public class Main {
                         if (cedulaStr != null) {
                             try {
                                 int cedulaPadre = Integer.parseInt(cedulaStr);
-                                arbol.mostrarHijos(arbol.getRaiz(), cedulaPadre);
+                                String mensaje = arbol.mostrarHijos(arbol.getRaiz(), cedulaPadre);
+                                JOptionPane.showMessageDialog(null, mensaje);
                             } catch (NumberFormatException e) {
                                 JOptionPane.showMessageDialog(null, "⚠ La cédula debe ser un número válido.");
                             }
