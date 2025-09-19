@@ -362,7 +362,7 @@ public class Main {
                         if (nivelEliminar != null) {
                             try {
                                 int nivel = Integer.parseInt(nivelEliminar);
-                                //JOptionPane.showMessageDialog(null,arbol.eliminarNivel(arbol.getRaiz(), nivel));
+                                JOptionPane.showMessageDialog(null,arbol.eliminarNivel(arbol.getRaiz(), nivel));
                             } catch (NumberFormatException e) {
                                 JOptionPane.showMessageDialog(null, "⚠ La cédula debe ser un número válido.");
                             }

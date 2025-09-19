@@ -13,7 +13,7 @@ public class ArbolN {
         return raiz == null;
     }
 
-    public Nodo buscarNodo(Nodo R, int cedulaBuscada) {
+    private Nodo buscarNodo(Nodo R, int cedulaBuscada) {
         Nodo p = R;
         while (p != null) {
             if (p.getCedula() == cedulaBuscada) {
@@ -557,72 +557,94 @@ public class ArbolN {
         return resultado;
     }
 
-    public void eliminarNivel(Nodo R, int nivel) {
-        if (R == null) return;
+    public String eliminarNivel(Nodo R, int nivel) {
+        if (R == null) return "El árbol está vacío.";
+        if (nivel == 1) return "No se puede eliminar la raíz del árbol.";
 
-        if (nivel == 1) {
-            // Caso especial: eliminar el nivel raíz → se pierde todo
-            R = null;
-            return;
-        }
-
-        eliminarNivelRecursivo(R, 1, nivel);
+        return eliminarNivelRecursivo(R, 1, nivel);
     }
 
-    private void eliminarNivelRecursivo(Nodo actual, int nivelActual, int nivelBuscado) {
-        if (actual == null) return;
+    private String eliminarNivelRecursivo(Nodo actual, int nivelActual, int nivelBuscado) {
+        if (actual == null) return "";
 
+        // Si los hijos de 'actual' están en el nivel a eliminar
         if (nivelActual + 1 == nivelBuscado && actual.getSw() == 1) {
             Nodo primerNodoNivel = actual.getLigaLista();
+            if (primerNodoNivel == null) return "";
 
-            if (primerNodoNivel == null) return;
+            String mensaje = "Eliminando nodos del nivel " + nivelBuscado + ":\n";
 
-            Nodo nuevoInicio = null;
-            Nodo fin = null;
+            // Encontrar hijo de mayor edad del padre
+            Nodo hijoMayorEdad = actual.getLigaLista();
+            Nodo tempH = actual.getLigaLista();
+            while (tempH != null) {
+                if (tempH.getEdad() > hijoMayorEdad.getEdad()) {
+                    hijoMayorEdad = tempH;
+                }
+                tempH = tempH.getLiga();
+            }
 
             // Recorremos los nodos del nivel que se va a eliminar
             Nodo cursor = primerNodoNivel;
             while (cursor != null) {
-                if (cursor.getSw() == 1) {
-                    // hijos de este nodo
+                mensaje += "Nodo eliminado: " + cursor.toString();
+
+                // Reasignar los hijos del nodo eliminado al hijo de mayor edad
+                if (cursor.getSw() == 1 && cursor.getLigaLista() != null) {
                     Nodo hijos = cursor.getLigaLista();
 
-                    if (hijos != null) {
-                        if (nuevoInicio == null) {
-                            nuevoInicio = hijos;  // Primer hijo
-                            fin = hijos;
-                            while (fin.getLiga() != null) {
-                                fin = fin.getLiga();
-                            }
-                        } else {
-                            // Conectar los hijos al final
-                            fin.setLiga(hijos);
-                            while (fin.getLiga() != null) {
-                                fin = fin.getLiga();
-                            }
-                        }
+                    if (hijoMayorEdad.getSw() == 1 && hijoMayorEdad.getLigaLista() != null) {
+                        // Conectar los hijos al final de la sublista existente
+                        Nodo ultimo = hijoMayorEdad.getLigaLista();
+                        while (ultimo.getLiga() != null) ultimo = ultimo.getLiga();
+                        ultimo.setLiga(hijos);
+                    } else {
+                        // Si hijoMayorEdad no tiene hijos, simplemente asignamos
+                        hijoMayorEdad.setLigaLista(hijos);
+                        hijoMayorEdad.setSw(1);
                     }
                 }
+
                 cursor = cursor.getLiga();
             }
 
-            // Reemplazar el nivel eliminado con los hijos encontrados
-            actual.setLigaLista(nuevoInicio);
-            if (nuevoInicio != null) {
-                actual.setSw(1);
-            } else {
-                actual.setSw(0);
+            // Eliminar nodos del nivel desconectando de la lista de hermanos
+            Nodo hermano = actual.getLigaLista();
+            Nodo anterior = null;
+            while (hermano != null) {
+                boolean eliminar = false;
+                Nodo check = primerNodoNivel;
+                while (check != null) {
+                    if (hermano == check) eliminar = true;
+                    check = check.getLiga();
+                }
+
+                if (eliminar) {
+                    if (anterior == null) {
+                        actual.setLigaLista(hermano.getLiga());
+                        hermano = actual.getLigaLista();
+                    } else {
+                        anterior.setLiga(hermano.getLiga());
+                        hermano = anterior.getLiga();
+                    }
+                } else {
+                    anterior = hermano;
+                    hermano = hermano.getLiga();
+                }
             }
 
-            return;
+            return mensaje;
         }
 
-        // Seguir recorriendo normalmente
+        // Recursión: recorrer sublista de hijos
         Nodo hijo = actual.getLigaLista();
+        String resultado = "";
         while (hijo != null) {
-            eliminarNivelRecursivo(hijo, nivelActual + 1, nivelBuscado);
+            resultado += eliminarNivelRecursivo(hijo, nivelActual + 1, nivelBuscado);
             hijo = hijo.getLiga();
         }
+
+        return resultado;
     }
 
     public String eliminarNodoYReordenar(Nodo raiz, int cedulaBuscada) {
