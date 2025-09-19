@@ -63,4 +63,10 @@ public class Nodo {
         this.liga = liga;
     }
 
+    public String toString() {
+        return "- Nombre: " + this.getNombre() +
+                ", cédula: " + this.getCedula() +
+                ", edad: " + this.getEdad() + "\n";
+    }
+
 }

@@ -118,7 +118,6 @@ public class Main {
                                                 + "Edad: " + edad
                                 );
                             }
-                            arbol.mostrarArbol(arbol.getRaiz(), 0);
                         } catch (NumberFormatException e) {
                             JOptionPane.showMessageDialog(null, "⚠️ Error: Debe ingresar valores numéricos válidos para cédula y edad.");
                         }
@@ -128,7 +127,7 @@ public class Main {
                         if (cedulaStr != null) {
                             try {
                                 int cedulaBuscada = Integer.parseInt(cedulaStr);
-                                arbol.eliminarNodo(arbol.getRaiz(), cedulaBuscada);
+                                JOptionPane.showMessageDialog(null,arbol.eliminarNodoYReordenar(arbol.getRaiz(), cedulaBuscada));
                             } catch (NumberFormatException e) {
                                 JOptionPane.showMessageDialog(null, "⚠ La cédula debe ser un número válido.");
                             }
@@ -150,7 +149,7 @@ public class Main {
                                 int nuevaEdad = Integer.parseInt(nuevaEdadStr);
 
                                 // Llamada al método del árbol
-                                arbol.actualizarNodo(arbol.getRaiz(), cedulaBuscada, nuevaCedula, nuevoNombre, nuevaEdad);
+                                JOptionPane.showMessageDialog(null, arbol.actualizarNodo(arbol.getRaiz(), cedulaBuscada, nuevaCedula, nuevoNombre, nuevaEdad));
 
                                 JOptionPane.showMessageDialog(null, "✅ Datos actualizados correctamente.");
 
@@ -202,7 +201,8 @@ public class Main {
                         if (cedulaStr != null) {
                             try {
                                 int cedulaHijo = Integer.parseInt(cedulaStr);
-                                arbol.mostrarPadre(arbol.getRaiz(), cedulaHijo);
+                                String mostrarPadre = arbol.mostrarPadre(arbol.getRaiz(), cedulaHijo);
+                                JOptionPane.showMessageDialog(null, mostrarPadre);
                             } catch (NumberFormatException e) {
                                 JOptionPane.showMessageDialog(null, "⚠ La cédula debe ser un número válido.");
                             }
@@ -213,8 +213,8 @@ public class Main {
                         if (cedulaStr != null) {
                             try {
                                 int cedulaPadre = Integer.parseInt(cedulaStr);
-                                String mensaje = arbol.mostrarHijos(arbol.getRaiz(), cedulaPadre);
-                                JOptionPane.showMessageDialog(null, mensaje);
+                                String mostrarHijos = arbol.mostrarHijos(arbol.getRaiz(), cedulaPadre);
+                                JOptionPane.showMessageDialog(null, mostrarHijos);
                             } catch (NumberFormatException e) {
                                 JOptionPane.showMessageDialog(null, "⚠ La cédula debe ser un número válido.");
                             }
@@ -225,18 +225,20 @@ public class Main {
                         if (cedulaStr != null) {
                             try {
                                 int cedulaHermano = Integer.parseInt(cedulaStr);
-                                arbol.mostrarHermanos(arbol.getRaiz(), cedulaHermano);
+                                String mostrarHermanos = arbol.mostrarHermanos(arbol.getRaiz(), cedulaHermano);
+                                JOptionPane.showMessageDialog(null, mostrarHermanos);
                             } catch (NumberFormatException e) {
                                 JOptionPane.showMessageDialog(null, "⚠ La cédula debe ser un número válido.");
                             }
                         }
                     }
                     case "4" -> {
-                        String cedulaStr = JOptionPane.showInputDialog(null, "Ingrese la cédula del pariente decendiente:");
+                        String cedulaStr = JOptionPane.showInputDialog(null, "Ingrese la cédula del pariente descendiente:");
                         if (cedulaStr != null) {
                             try {
                                 int cedulaPariente = Integer.parseInt(cedulaStr);
-                                arbol.mostrarAncestros(cedulaPariente);
+                                String ancestros = arbol.mostrarAncestros(cedulaPariente);
+                                JOptionPane.showMessageDialog(null, ancestros);
                             } catch (NumberFormatException e) {
                                 JOptionPane.showMessageDialog(null, "⚠ La cédula debe ser un número válido.");
                             }
@@ -247,7 +249,7 @@ public class Main {
                         if (cedulaStr != null) {
                             try {
                                 int cedulaPariente = Integer.parseInt(cedulaStr);
-                                arbol.mostrarDescendientes(arbol.getRaiz(), cedulaPariente);
+                               JOptionPane.showMessageDialog(null,arbol.mostrarDescendientes(arbol.getRaiz(), cedulaPariente));
                             } catch (NumberFormatException e) {
                                 JOptionPane.showMessageDialog(null, "⚠ La cédula debe ser un número válido.");
                             }
@@ -272,12 +274,13 @@ public class Main {
                 ╔════════════════════════════════════
                 ║       🏗  Estructura del Árbol       
                 ╠════════════════════════════════════
-                ║ 1. 🔝 Nodo con mayor grado           
-                ║ 2. 📏 Nodo con mayor nivel           
-                ║ 3. 🌳 Altura del árbol               
-                ║ 4. 🎯 Nivel de un registro           
-                ║ 5. 📂 Registros por nivel            
-                ║ 6. 🔙 Volver al Menú Principal       
+                ║ 1. 🌲 Mostrar árbol                  
+                ║ 2. 🔝 Nodo con mayor grado           
+                ║ 3. 📏 Nodo con mayor nivel           
+                ║ 4. 🌳 Altura del árbol               
+                ║ 5. 🎯 Nivel de un registro           
+                ║ 6. 📂 Registros por nivel            
+                ║ 7. 🔙 Volver al Menú Principal       
                 ╚════════════════════════════════════
                 
                 👉 Selecciona una opción:
@@ -286,40 +289,42 @@ public class Main {
                     JOptionPane.QUESTION_MESSAGE
             );
 
-            if (opcion == null || opcion.equals("6")) {
+            if (opcion == null || opcion.equals("7")) {
                 back = true;
             } else {
                 switch (opcion) {
                     case "1" ->
-                        arbol.mostrarNodoConMayorGrado(arbol.getRaiz());
+                            JOptionPane.showMessageDialog(null, arbol.mostrarArbol()); // Nuevo método en la primera opción
                     case "2" ->
-                        arbol.mostrarNodoConMayorNivel(arbol.getRaiz());
+                            JOptionPane.showMessageDialog(null, arbol.mostrarNodoConMayorGrado(arbol.getRaiz()));
                     case "3" ->
-                        arbol.mostrarAltura(arbol.getRaiz());
-                    case "4" -> {
-                        String cedulaStr = JOptionPane.showInputDialog(null, "Ingrese la cedula de la persona a consultar:");
+                            JOptionPane.showMessageDialog(null, arbol.mostrarNodoConMayorNivel(arbol.getRaiz()));
+                    case "4" ->
+                            JOptionPane.showMessageDialog(null,arbol.mostrarAltura(arbol.getRaiz()));
+                    case "5" -> {
+                        String cedulaStr = JOptionPane.showInputDialog(null, "Ingrese la cédula de la persona a consultar:");
                         if (cedulaStr != null) {
                             try {
                                 int cedula = Integer.parseInt(cedulaStr);
-                                arbol.mostrarNivelDeRegistro(arbol.getRaiz(), cedula);
+                                JOptionPane.showMessageDialog(null,arbol.mostrarNivelDeRegistro(arbol.getRaiz(), cedula));
                             } catch (NumberFormatException e) {
                                 JOptionPane.showMessageDialog(null, "⚠ La cédula debe ser un número válido.");
                             }
                         }
                     }
-                    case "5" -> {
+                    case "6" -> {
                         String nivel = JOptionPane.showInputDialog(null, "Ingrese el nivel a consultar:");
                         if (nivel != null) {
                             try {
                                 int nivelaMostrar = Integer.parseInt(nivel);
-                                arbol.mostrarRegistrosDeNivel(arbol.getRaiz(), nivelaMostrar);
+                                JOptionPane.showMessageDialog(null, arbol.mostrarRegistrosDeNivel(arbol.getRaiz(), nivelaMostrar));
                             } catch (NumberFormatException e) {
-                                JOptionPane.showMessageDialog(null, "⚠ La cédula debe ser un número válido.");
+                                JOptionPane.showMessageDialog(null, "⚠ El nivel debe ser un número válido.");
                             }
                         }
                     }
                     default ->
-                        JOptionPane.showMessageDialog(null, "⚠ Opción no válida.");
+                            JOptionPane.showMessageDialog(null, "⚠ Opción no válida.");
                 }
             }
         }
@@ -357,7 +362,7 @@ public class Main {
                         if (nivelEliminar != null) {
                             try {
                                 int nivel = Integer.parseInt(nivelEliminar);
-                                arbol.eliminarNivel(arbol.getRaiz(), nivel);
+                                //JOptionPane.showMessageDialog(null,arbol.eliminarNivel(arbol.getRaiz(), nivel));
                             } catch (NumberFormatException e) {
                                 JOptionPane.showMessageDialog(null, "⚠ La cédula debe ser un número válido.");
                             }
@@ -380,14 +385,14 @@ public class Main {
         arbol.insertar(arbol.getRaiz(), "Maria", 200, 67, 100);
         arbol.insertar(arbol.getRaiz(), "Simon", 250, 69, 100);
         arbol.insertar(arbol.getRaiz(), "Rosa", 400, 41, 300);
-        arbol.insertar(arbol.getRaiz(), "Sara", 550, 47, 300);
+        arbol.insertar(arbol.getRaiz(), "Sara", 550, 42, 300);
         arbol.insertar(arbol.getRaiz(), "Hugo", 350, 47, 200);
-        arbol.insertar(arbol.getRaiz(), "Paco", 600, 47, 200);
-        arbol.insertar(arbol.getRaiz(), "Laura", 450, 47, 200);
-        arbol.insertar(arbol.getRaiz(), "Luis", 750, 47, 200);
-        arbol.insertar(arbol.getRaiz(), "Nora", 700, 47, 350);
-        arbol.insertar(arbol.getRaiz(), "Lola", 500, 47, 350);
-        arbol.insertar(arbol.getRaiz(), "Pablo", 650, 47, 350);
+        arbol.insertar(arbol.getRaiz(), "Paco", 600, 51, 200);
+        arbol.insertar(arbol.getRaiz(), "Laura", 450, 49, 200);
+        arbol.insertar(arbol.getRaiz(), "Luis", 750, 50, 200);
+        arbol.insertar(arbol.getRaiz(), "Nora", 700, 43, 350);
+        arbol.insertar(arbol.getRaiz(), "Lola", 500, 44, 350);
+        arbol.insertar(arbol.getRaiz(), "Pablo", 650, 45, 350);
     }
 }
 

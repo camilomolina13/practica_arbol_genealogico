@@ -78,33 +78,37 @@ public class ArbolN {
         }
     }
 
-    public void mostrarArbol(Nodo R,int nivel) {
-        if (estaVacio()) {
-            System.out.println("El árbol no tiene datos para mostrar");
+    public String mostrarArbol() {
+        if (raiz == null) {
+            return "El árbol está vacío.";
         }
-        Nodo P = R;
-        boolean esPrimero = true;
-        String tabularNivel = "";
-        for (int i = nivel; i > 0; i--) {
-            tabularNivel+=" ‖ ";
+        StringBuilder sb = new StringBuilder();
+        recorrer(raiz, sb, 0);
+        return sb.toString();
+    }
+
+    private void recorrer(Nodo nodo, StringBuilder sb, int nivel) {
+        if (nodo == null) return;
+
+        // Identación según el nivel
+        for (int i = 0; i < nivel; i++) {
+            sb.append("||    ");
         }
 
-        // Mientras haya nodos en la lista
-        while (P != null) {
-            if (!esPrimero) {
-                System.out.print(", ");
-            }
+        // Nodo actual
+        sb.append("[").append(nodo.getCedula()).append("] ")
+                .append(nodo.getEdad()).append(", ")
+                .append(nodo.getNombre())
+                .append("\n");
 
-            // Si es un nodo con información (sw == 0), imprimirlo directamente
-            System.out.print("\n" +tabularNivel+ "[" + P.getNombre() + ", " + P.getCedula() + ", " + P.getEdad() + "]");
+        // Recorremos la sublista (hijos)
+        if (nodo.getSw() == 1 && nodo.getLigaLista() != null) {
+            recorrer(nodo.getLigaLista(), sb, nivel + 1);
+        }
 
-            // Si el nodo apunta a una sublista (sw == 1), abrir paréntesis y mostrar la sublista
-            if (P.getSw() == 1) {
-                mostrarArbol(P.getLigaLista(),nivel+1);
-            }
-
-            P = P.getLiga();
-            esPrimero = false;
+        // Recorremos el hermano
+        if (nodo.getLiga() != null) {
+            recorrer(nodo.getLiga(), sb, nivel);
         }
     }
 
@@ -126,6 +130,7 @@ public class ArbolN {
         Nodo hijo = nodo.getLigaLista();
 
         while (hijo != null) {
+            //mientras la sublista no esté vacía, muestra sus hijos
             mensaje += "- Nombre: " + hijo.getNombre() +", cédula: "+ hijo.getCedula() + ", edad: " + hijo.getEdad() + "\n";
             hijo = hijo.getLiga();
         }
@@ -133,42 +138,52 @@ public class ArbolN {
         return mensaje;
     }
 
-    public void mostrarHermanos(Nodo R, int cedulaHermano) {
-        // Buscar el nodo en el árbol usando buscarNodo
+    public String mostrarHermanos(Nodo R, int cedulaHermano) {
+        // Se busca el nodo con la cédula indicada en el árbol
         Nodo nodo = buscarNodo(R, cedulaHermano);
 
-        // Si el nodo no existe, mostrar mensaje y salir
+        // Si el nodo no existe en el árbol
         if (nodo == null) {
-            System.out.println("El nodo que busca no existe");
-        }else{
-            // Buscar el padre del nodo, ya que los hermanos se encuentran en la sublista del padre
+            return "El nodo que busca no existe";
+        } else {
+            // Se busca el padre del nodo encontrado
             Nodo padre = buscarPadre(R, cedulaHermano);
 
-            // Si no tiene padre, significa que es la raíz, entonces no tiene hermanos
+            // Si el padre es null, significa que el nodo es la raíz → no tiene hermanos
             if (padre == null) {
-                System.out.println("El nodo no tiene hermanos");
-                return;
+                return "El nodo no tiene hermanos";
             }
 
-            // Recorremos los hijos del padre (la lista de hermanos)
+            // Se obtiene la lista de hijos del padre
             Nodo hermano = padre.getLigaLista();
-            boolean tieneHermanos = false; // Bandera para verificar si existen hermanos
 
-            System.out.println("Hermanos de " + nodo.getNombre() + " (" + cedulaHermano + "):");
+            // Bandera para verificar si realmente hay hermanos
+            boolean tieneHermanos = false;
 
+            // Se inicializa el mensaje con el nombre y cédula del nodo consultado
+            String mensaje = "Hermanos de " + nodo.getNombre() + " (" + cedulaHermano + "):\n";
+
+            // Recorremos la lista de hijos del padre
             while (hermano != null) {
-                // Imprimimos todos los hijos del padre excepto el mismo nodo buscado
+                // Evitamos mostrar al mismo nodo consultado
                 if (hermano.getCedula() != cedulaHermano) {
-                    tieneHermanos = true;
-                    System.out.println(hermano.getNombre());
+                    tieneHermanos = true; // ✅ Confirmamos que sí tiene hermanos
+                    // Agregamos la información del hermano encontrado al mensaje
+                    mensaje += "- Nombre: " + hermano.getNombre()
+                            + ", cédula: " + hermano.getCedula()
+                            + ", edad: " + hermano.getEdad() + "\n";
                 }
-                hermano = hermano.getLiga(); // Avanzamos al siguiente hermano
+                // Avanzamos al siguiente hermano en la lista
+                hermano = hermano.getLiga();
             }
 
-            // Si no se encontraron hermanos distintos
+            // Si no se encontró ningún hermano, se devuelve un mensaje específico
             if (!tieneHermanos) {
-                System.out.println("El nodo no tiene hermanos");
+                mensaje = "El nodo no tiene hermanos";
             }
+
+            // Retornamos el mensaje final con la información encontrada
+            return mensaje;
         }
     }
 
@@ -210,30 +225,31 @@ public class ArbolN {
         return null;
     }
 
-    public void mostrarPadre(Nodo R, int cedulaHijo) {
+    public String mostrarPadre(Nodo R, int cedulaHijo) {
         // Validar si el nodo hijo existe en el árbol usando buscarNodo
         Nodo nodoHijo = buscarNodo(R, cedulaHijo);
         if (nodoHijo == null) {
-            System.out.println("El nodo con cédula " + cedulaHijo + " no existe en el árbol.");
-            return; // salimos porque no tiene sentido seguir buscando
-        }
+            return "El nodo con cédula " + cedulaHijo + " no existe en el árbol.";
+        }else{
+            // Si existe, buscamos el padre con el método buscarPadre
+            Nodo padre = buscarPadre(R, cedulaHijo);
 
-        // Si existe, buscamos el padre con el método buscarPadre
-        Nodo padre = buscarPadre(R, cedulaHijo);
-
-        if (padre == null) {
-            // Si el padre es null, significa que es la raíz
-            System.out.println("El nodo con cédula " + cedulaHijo + " es la raíz, no tiene padre.");
-        } else {
-            // Mostramos los datos del padre
-            System.out.println("El padre de " + nodoHijo.getNombre() + " es: " +
-                    padre.getNombre());
+            if (padre == null) {
+                // Si el padre es null, significa que es la raíz
+                return "El nodo con cédula " + cedulaHijo + " es la raíz, no tiene padre.";
+            } else {
+                // Mostramos los datos del padre
+                return "El padre de " + nodoHijo.getNombre() + " es: " + padre.getNombre();
+            }
         }
     }
 
-    public void mostrarAltura(Nodo R) {
+    public String mostrarAltura(Nodo R) {
+        // Calcular la altura del árbol usando el método existente
         int altura = calcularAltura(R);
-        System.out.println("La altura del árbol es: " + altura);
+
+        // Retornar la altura como mensaje
+        return "La altura del árbol es: " + altura;
     }
 
     private int calcularAltura(Nodo R) {
@@ -258,16 +274,19 @@ public class ArbolN {
         return maxAltura + 1; // Altura del nodo actual es 1 más la altura máxima de sus hijos
     }
 
-    public void actualizarNodo(Nodo R, int cedulaBuscada, int cedula, String nombre, int edad) {
+    public String actualizarNodo(Nodo R, int cedulaBuscada, int cedula, String nombre, int edad) {
         Nodo nodo = buscarNodo(R, cedulaBuscada);
+
         if (nodo == null) {
-            System.out.println("El nodo no existe");
-        }else{
-            System.out.println("Nodo: "+ nodo.getNombre() + " actualizado correctamente");
+            return "El nodo con cédula " + cedulaBuscada + " no existe.";
+        } else {
+            // Actualizar los datos del nodo
             nodo.setNombre(nombre);
             nodo.setCedula(cedula);
             nodo.setEdad(edad);
-            System.out.println("Nodo actualizado "+ "Nombre: "+nodo.getNombre()+ " Cédula: " + nodo.getCedula() +" Edad: "+nodo.getEdad());
+
+            // Retornar mensaje de confirmación usando toString()
+            return "Nodo actualizado correctamente: \n" + nodo.toString();
         }
     }
 
@@ -320,48 +339,54 @@ public class ArbolN {
         }
     }
 
-    public void mostrarAncestros(int cedulaBuscada) {
+    public String mostrarAncestros(int cedulaBuscada) {
         if (raiz == null) {
-            System.out.println("El árbol está vacío.");
-            return;
+            return "El árbol está vacío.";
         }
 
-        System.out.println("Ancestros de " + cedulaBuscada + ":");
-        if (!mostrarAncestrosRecursivo(raiz, cedulaBuscada)) {
-            System.out.println("No se encontró el nodo con cédula " + cedulaBuscada);
+        String ancestros = mostrarAncestrosRecursivo(raiz, cedulaBuscada);
+        String resultado = "Ancestros de " + cedulaBuscada + ":\n";
+
+        if (ancestros.isEmpty()) {
+            return "No se encontró el nodo con cédula " + cedulaBuscada;
         }
+
+        return resultado + ancestros;
     }
 
-    private boolean mostrarAncestrosRecursivo(Nodo actual, int cedulaBuscada) {
-        if (actual == null) return false;
+    private String mostrarAncestrosRecursivo(Nodo actual, int cedulaBuscada) {
+        if (actual == null) return "";
 
         // Caso base: encontramos el nodo
         if (actual.getCedula() == cedulaBuscada) {
-            return true;
+            return "✓ Nodo encontrado\n"; // Marcamos el final de la búsqueda
         }
 
         // Buscar en sus hijos
         Nodo hijo = actual.getLigaLista();
         while (hijo != null) {
-            if (mostrarAncestrosRecursivo(hijo, cedulaBuscada)) {
-                // Si el hijo contiene el nodo buscado, este "actual" es un ancestro
-                System.out.println(" → " + actual.getNombre() + " (Cédula: " + actual.getCedula() + ")");
-                return true;
+            String resultadoHijo = mostrarAncestrosRecursivo(hijo, cedulaBuscada);
+            if (!resultadoHijo.isEmpty()) {
+                // Este "actual" es un ancestro → usamos toString() del nodo
+                return actual.toString() + resultadoHijo;
             }
             hijo = hijo.getLiga();
         }
 
-        return false;
+        return "";
     }
 
-    public void mostrarNodoConMayorGrado(Nodo R) {
+    public String mostrarNodoConMayorGrado(Nodo R) {
+        // Si el árbol está vacío
         if (R == null) {
-            System.out.println("El árbol está vacío");
+            return "El árbol está vacío";
         } else {
+            // Obtener el nodo con mayor grado
             Nodo nodoMayor = obtenerNodoConMayorGrado(R);
 
+            // Si se encontró un nodo
             if (nodoMayor != null) {
-                // Contar hijos para mostrar el grado
+                // Contar hijos para calcular el grado del nodo
                 int grado = 0;
                 Nodo hijo = nodoMayor.getLigaLista();
                 while (hijo != null) {
@@ -369,32 +394,41 @@ public class ArbolN {
                     hijo = hijo.getLiga();
                 }
 
-                System.out.println("El nodo con mayor grado es: "
+                // Retornar información del nodo con mayor grado
+                return "El nodo con mayor grado es: "
                         + nodoMayor.getNombre()
-                        + " con grado: " + grado);
+                        + " con grado: " + grado;
             } else {
-                System.out.println("No se encontró ningún nodo en el árbol");
+                // No se encontró ningún nodo
+                return "No se encontró ningún nodo en el árbol";
             }
         }
     }
 
-    public void mostrarNodoConMayorNivel(Nodo R) {
+    public String mostrarNodoConMayorNivel(Nodo R) {
+        // Verificar si el árbol está vacío
         if (R == null) {
-            System.out.println("El árbol está vacío");
-            return;
+            return "El árbol está vacío";
         }
 
-        int altura = calcularAltura(R); // Ya lo tienes implementado
-        int nivelObjetivo = altura - 1; // El nivel más profundo
+        // Calcular la altura del árbol
+        int altura = calcularAltura(R); // Método previamente implementado
 
+        // Determinar el nivel más profundo (mayor nivel)
+        int nivelObjetivo = altura - 1;
+
+        // Obtener un nodo que se encuentre en el nivel más profundo
         Nodo nodoMayorNivel = obtenerNodoEnNivel(R, 0, nivelObjetivo);
 
+        // Verificar si se encontró el nodo
         if (nodoMayorNivel != null) {
-            System.out.println("El nodo con mayor nivel es: "
+            // Retornar información del nodo con mayor nivel
+            return "El nodo con mayor nivel es: "
                     + nodoMayorNivel.getNombre()
-                    + " en el nivel: " + (nivelObjetivo +1));
+                    + " en el nivel: " + (nivelObjetivo + 1);
         } else {
-            System.out.println("No se encontró ningún nodo en el árbol");
+            // Caso en que no hay nodos en el árbol
+            return "No se encontró ningún nodo en el árbol";
         }
     }
 
@@ -421,36 +455,57 @@ public class ArbolN {
         return resultado;
     }
 
-    public void mostrarDescendientes(Nodo raiz, int cedulaBuscada) {
+    public String mostrarDescendientes(Nodo raiz, int cedulaBuscada) {
+        // Buscar el nodo en el árbol
         Nodo nodo = buscarNodo(raiz, cedulaBuscada);
+
+        // Si no existe
         if (nodo == null) {
-            System.out.println("No se encontró el nodo con cédula " + cedulaBuscada);
-            return;
+            return "No se encontró el nodo con cédula " + cedulaBuscada;
         }
 
-        System.out.println("Descendientes de " + nodo.getNombre() + " (Cédula: " + nodo.getCedula() + "):");
-        mostrarDescendientesRecursivo(nodo.getLigaLista());
+        // Si existe, se empieza a construir el mensaje
+        String mensaje = "Descendientes de " + nodo.getNombre()
+                + " (Cédula: " + nodo.getCedula() + "):\n";
+
+        // Concatenamos los descendientes usando recursión
+        mensaje += mostrarDescendientesRecursivo(nodo.getLigaLista());
+
+        return mensaje;
     }
 
-    private void mostrarDescendientesRecursivo(Nodo hijo) {
+    private String mostrarDescendientesRecursivo(Nodo hijo) {
+        if (hijo == null) return "";
+
+        String resultado = "";
         while (hijo != null) {
-            System.out.println(" → " + hijo.getNombre() + " (Cédula: " + hijo.getCedula() + ")");
-            // Recursión con los hijos de este nodo
+            // Aquí usamos directamente el toString() del nodo
+            resultado += " → " + hijo.toString();
+
+            // Llamada recursiva para los hijos de este nodo
             if (hijo.getLigaLista() != null) {
-                mostrarDescendientesRecursivo(hijo.getLigaLista());
+                resultado += mostrarDescendientesRecursivo(hijo.getLigaLista());
             }
-            hijo = hijo.getLiga(); // pasar al siguiente hermano
+
+            // Pasar al siguiente hermano
+            hijo = hijo.getLiga();
         }
+
+        return resultado;
     }
 
-    public int mostrarNivelDeRegistro(Nodo raiz, int cedulaBuscada) {
+    public String mostrarNivelDeRegistro(Nodo raiz, int cedulaBuscada) {
+        // Buscar el nivel del nodo con la cédula indicada, empezando desde nivel 0
         int nivel = buscarNivel(raiz, cedulaBuscada, 0);
+
+        // Verificar si el nodo fue encontrado
         if (nivel == -1) {
-            System.out.println("No se encontró el nodo con cédula " + cedulaBuscada);
+            // Nodo no encontrado
+            return "No se encontró el nodo con cédula " + cedulaBuscada;
         } else {
-            System.out.println("El nodo con cédula " + cedulaBuscada + " está en el nivel " + nivel);
+            // Nodo encontrado, retornar mensaje con el nivel
+            return "El nodo con cédula " + cedulaBuscada + " está en el nivel " + nivel;
         }
-        return nivel;
     }
 
     private int buscarNivel(Nodo actual, int cedula, int nivel) {
@@ -467,23 +522,39 @@ public class ArbolN {
         return -1;
     }
 
-    public void mostrarRegistrosDeNivel(Nodo raiz, int nivelBuscado) {
-        System.out.println("Registros en el nivel " + nivelBuscado + ":");
-        mostrarEnNivel(raiz, 0, nivelBuscado);
+    public String mostrarRegistrosDeNivel(Nodo raiz, int nivelBuscado) {
+        // Inicializar el mensaje con el encabezado del nivel
+        String mensaje = "Registros en el nivel " + nivelBuscado + ":\n";
+
+        // Llamar al método auxiliar que devuelve los registros en ese nivel
+        mensaje += mostrarEnNivelComoString(raiz, 0, nivelBuscado);
+
+        // Retornar el mensaje completo
+        return mensaje;
     }
 
-    private void mostrarEnNivel(Nodo actual, int nivelActual, int nivelBuscado) {
-        if (actual == null) return;
+    private String mostrarEnNivelComoString(Nodo nodo, int nivelActual, int nivelBuscado) {
+        // Si el nodo es nulo, no hay nada que mostrar
+        if (nodo == null) return "";
 
+        String resultado = "";
+
+        // Si el nodo actual está en el nivel buscado, agregar su información
         if (nivelActual == nivelBuscado) {
-            System.out.println(" → " + actual.getNombre() + " (Cédula: " + actual.getCedula() + ")");
+            resultado += nodo.toString();
         }
 
-        Nodo hijo = actual.getLigaLista();
-        while (hijo != null) {
-            mostrarEnNivel(hijo, nivelActual + 1, nivelBuscado);
-            hijo = hijo.getLiga();
+        // Recorrer los hijos del nodo
+        if (nodo.getSw() == 1) {
+            Nodo hijo = nodo.getLigaLista();
+            while (hijo != null) {
+                resultado += mostrarEnNivelComoString(hijo, nivelActual + 1, nivelBuscado);
+                hijo = hijo.getLiga();
+            }
         }
+
+        // Retornar los resultados acumulados
+        return resultado;
     }
 
     public void eliminarNivel(Nodo R, int nivel) {
@@ -554,46 +625,74 @@ public class ArbolN {
         }
     }
 
-    public Nodo eliminarNodo(Nodo raiz, int cedulaBuscada) {
-        if (raiz == null) return null;
+    public String eliminarNodoYReordenar(Nodo raiz, int cedulaBuscada) {
+        // Verificar si el árbol está vacío
+        if (raiz == null) return "El árbol está vacío";
+
+        // Verificar si se intenta eliminar la raíz
+        if (raiz.getCedula() == cedulaBuscada) {
+            return "No se puede eliminar la raíz del árbol.";
+        }
 
         Nodo hijo = raiz.getLigaLista();
         Nodo anterior = null;
 
         while (hijo != null) {
             if (hijo.getCedula() == cedulaBuscada) {
-                // caso: eliminar hijo actual
+                // Nodo encontrado, proceder a eliminar
+                Nodo hijosDelEliminado = hijo.getLigaLista(); // Hijos que se van a heredar
+                Nodo siguienteHermano = hijo.getLiga();       // Hermanos restantes
+
+                // Conectar hermanos del nodo eliminado
                 if (anterior == null) {
-                    // el nodo eliminado es el primer hijo
-                    raiz.setLigaLista(hijo.getLiga());
+                    raiz.setLigaLista(siguienteHermano);
                 } else {
-                    anterior.setLiga(hijo.getLiga());
+                    anterior.setLiga(siguienteHermano);
                 }
 
-                // Reubicar hijos del nodo eliminado
-                if (hijo.getLigaLista() != null) {
-                    Nodo primerHijo = hijo.getLigaLista();
-                    Nodo ultimoHijo = primerHijo;
-                    while (ultimoHijo.getLiga() != null) {
-                        ultimoHijo = ultimoHijo.getLiga();
+                // Si el nodo eliminado tiene hijos, asignarlos al hermano de mayor edad
+                if (hijosDelEliminado != null && siguienteHermano != null) {
+                    Nodo hermanoMayor = siguienteHermano;
+                    Nodo temp = siguienteHermano;
+
+                    // Buscar el hermano con mayor edad
+                    while (temp != null) {
+                        if (temp.getEdad() > hermanoMayor.getEdad()) {
+                            hermanoMayor = temp;
+                        }
+                        temp = temp.getLiga();
                     }
-                    // enlazar los hijos al hermano mayor
-                    ultimoHijo.setLiga(hijo.getLiga());
-                    if (anterior == null) {
-                        raiz.setLigaLista(primerHijo);
-                    } else {
-                        anterior.setLiga(primerHijo);
+
+                    // Heredar los hijos: agregarlos al inicio de la sublista de hijos del hermano mayor
+                    if (hermanoMayor.getSw() == 1) {
+                        Nodo ultimoHijo = hijosDelEliminado;
+                        while (ultimoHijo.getLiga() != null) {
+                            ultimoHijo = ultimoHijo.getLiga();
+                        }
+                        ultimoHijo.setLiga(hermanoMayor.getLigaLista());
                     }
+                    hermanoMayor.setLigaLista(hijosDelEliminado);
+                    hermanoMayor.setSw(1);
                 }
 
-                return raiz;
+                // Retornar mensaje de confirmación
+                return "Nodo con cédula " + cedulaBuscada + " eliminado correctamente y hijos heredados al hermano de mayor edad.";
             }
 
-            eliminarNodo(hijo, cedulaBuscada);
-            anterior = hijo;
-            hijo = hijo.getLiga();
+            // Recursión en la sublista de hijos
+            String resultado = eliminarNodoYReordenar(hijo, cedulaBuscada);
+            if (!resultado.startsWith("Nodo con cédula") && !resultado.equals("No se puede eliminar la raíz del árbol.")) {
+                // Si el nodo no fue eliminado en esta sublista, continuar
+                anterior = hijo;
+                hijo = hijo.getLiga();
+            } else {
+                // Nodo eliminado o mensaje de raíz, retornar resultado
+                return resultado;
+            }
         }
-        return raiz;
+
+        // Si el nodo no fue encontrado en este nivel
+        return "No se encontró el nodo con cédula " + cedulaBuscada;
     }
 
 }
